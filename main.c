@@ -11,10 +11,11 @@ int main () {
     InitWindow(WX, WY, "2D MAP");
     Vector2 pos_map = {200, 25};
     const int TILE = 20, N = 20;
-    SetTargetFPS(60);
+    SetTargetFPS(144);
     
     int map_2d[N][N];
     Player p;
+    const float v = 70;
     p.pos.x = (N / 2 + .5) * TILE + pos_map.x;
     p.pos.y = (N / 2 + .5) * TILE + pos_map.y;
     p.dir.x = 1, p.dir.y = 0;
@@ -28,6 +29,15 @@ int main () {
             RotatePlayer(&p, -dt * PI);
         if (IsKeyDown(KEY_RIGHT))
             RotatePlayer(&p, dt * PI);
+
+        if (IsKeyDown(KEY_W))
+            MovePlayerForward(&p, v, dt, N, map_2d, TILE, pos_map);
+        if (IsKeyDown(KEY_S)) 
+            MovePlayerBackward(&p, v / 2, dt, N, map_2d, TILE, pos_map);
+        if (IsKeyDown(KEY_D))
+            MovePlayerRight(&p, v / 2, dt, N, map_2d, TILE, pos_map);
+        if (IsKeyDown(KEY_A))
+            MovePlayerLeft(&p, v / 2, dt, N, map_2d, TILE, pos_map);
 
         BeginDrawing();
             ClearBackground(GRAY);

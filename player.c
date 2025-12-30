@@ -24,3 +24,44 @@ void RotatePlayer (Player *p, float alpha) {
     ny = (*p).plane.x * sin(alpha) + (*p).plane.y * cos(alpha);
     (*p).plane.x = nx, (*p).plane.y = ny;
 }
+
+void MovePlayerForward (Player *p, float v, float dt, int N, int map[N][N], int TILE, Vector2 mpos) {
+    float nposx = (*p).pos.x + v * dt * (*p).dir.x;
+    float nposy = (*p).pos.y + v * dt * (*p).dir.y;
+    int bx = (int)((nposx - mpos.x) / TILE);
+    int by = (int)((nposy - mpos.y) / TILE);
+    int cx = (int)(((*p).pos.x - mpos.x) / TILE);
+    int cy = (int)(((*p).pos.y - mpos.y) / TILE);
+    if (!map[cx][by]) (*p).pos.y = nposy;
+    if (!map[bx][cy]) (*p).pos.x = nposx;
+}
+void MovePlayerBackward (Player *p, float v, float dt, int N, int map[N][N], int TILE, Vector2 mpos) {
+    float nposx = (*p).pos.x - v * dt * (*p).dir.x;
+    float nposy = (*p).pos.y - v * dt * (*p).dir.y;
+    int bx = (int)((nposx - mpos.x) / TILE);
+    int by = (int)((nposy - mpos.y) / TILE);
+    int cx = (int)(((*p).pos.x - mpos.x) / TILE);
+    int cy = (int)(((*p).pos.y - mpos.y) / TILE);
+    if (!map[cx][by]) (*p).pos.y = nposy;
+    if (!map[bx][cy]) (*p).pos.x = nposx;
+}
+void MovePlayerLeft (Player *p, float v, float dt, int N, int map[N][N], int TILE, Vector2 mpos) {
+    float nposx = (*p).pos.x + v * dt * (*p).dir.y;
+    float nposy = (*p).pos.y - v * dt * (*p).dir.x;
+    int bx = (int)((nposx - mpos.x) / TILE);
+    int by = (int)((nposy - mpos.y) / TILE);
+    int cx = (int)(((*p).pos.x - mpos.x) / TILE);
+    int cy = (int)(((*p).pos.y - mpos.y) / TILE);
+    if (!map[cx][by]) (*p).pos.y = nposy;
+    if (!map[bx][cy]) (*p).pos.x = nposx;
+}
+void MovePlayerRight (Player *p, float v, float dt, int N, int map[N][N], int TILE, Vector2 mpos) {
+    float nposx = (*p).pos.x - v * dt * (*p).dir.y;
+    float nposy = (*p).pos.y + v * dt * (*p).dir.x;
+    int bx = (int)((nposx - mpos.x) / TILE);
+    int by = (int)((nposy - mpos.y) / TILE);
+    int cx = (int)(((*p).pos.x - mpos.x) / TILE);
+    int cy = (int)(((*p).pos.y - mpos.y) / TILE);
+    if (!map[cx][by]) (*p).pos.y = nposy;
+    if (!map[bx][cy]) (*p).pos.x = nposx;
+}
