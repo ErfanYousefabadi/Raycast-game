@@ -1,30 +1,32 @@
-#ifndef RAYLIB_PROJECT_ERFAN
 #define RAYLIB_PROJECT_ERFAN
 #include "raylib.h"
-#endif
 #include "map.h"
 #include "player.h"
 
 int main () {
     
-    const int WX = 800, WY = 450;
+    const int WX = 1280, WY = 720;
     InitWindow(WX, WY, "2D MAP");
-    Vector2 pos_map = {200, 25};
-    const int TILE = 20, N = 20;
-    SetTargetFPS(144);
+    const int TILE = 15, N = 15;
+    Vector2 pos_map = {WX - TILE * N - 20, 20};
+    SetTargetFPS(60);
     
     int map_2d[N][N];
     Player p;
     const float v = 70;
+    const int raycnt = 800;
     p.pos.x = (N / 2 + .5) * TILE + pos_map.x;
     p.pos.y = (N / 2 + .5) * TILE + pos_map.y;
     p.dir.x = 1, p.dir.y = 0;
     p.plane.x = 0, p.plane.y = 0.66;
     InitMap(N, map_2d);
     while (!WindowShouldClose()) {
+        // update map
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) 
             UpdateMap(N, TILE, pos_map, GetMousePosition(), p.pos, map_2d);
         float dt = GetFrameTime();
+
+        // update player
         if (IsKeyDown(KEY_LEFT))
             RotatePlayer(&p, -dt * PI);
         if (IsKeyDown(KEY_RIGHT))
@@ -40,8 +42,15 @@ int main () {
             MovePlayerLeft(&p, v / 2, dt, N, map_2d, TILE, pos_map);
 
         BeginDrawing();
-            ClearBackground(GRAY);
+            ClearBackground((Color){0, 102, 204, 255});
+            DrawRectangle(0, WY / 2, WX, WY / 2, GRAY);
             DrawMap(pos_map, TILE, N, map_2d);
+            Vector2 DeltaRay = (Vector2){p.plane.x * 2 / raycnt, p.plane.y * 2 / raycnt};
+            for (int i = 0; i < raycnt; i++) {
+                Vector2 ray = {p.dir.x + p.plane.x - i * DeltaRay.x, p.dir.y + p.plane.y - i * DeltaRay.y};
+
+                DrawLine(p.pos.x, p.pos.y, p.pos.x + ray.x * 40, p.pos.y + ray.y * 40, PINK);
+            }
             ShowPlayer(p);
         EndDrawing();
     }

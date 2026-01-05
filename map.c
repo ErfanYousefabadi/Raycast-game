@@ -9,7 +9,7 @@ void DrawMap (Vector2 pos, const int TILE, const int N, int map[N][N]) {
     for (int i = 0; i < N; i++)
         for (int j = 0; j < N; j++)
             if (map[i][j])
-                DrawRectangleBorder(pos.x + TILE * i, pos.y + TILE * j, TILE, TILE, DARKBLUE, LIGHTGRAY);
+                DrawRectangleBorder(pos.x + TILE * i, pos.y + TILE * j, TILE, TILE, BLACK, LIGHTGRAY);
             else DrawRectangleBorder(pos.x + TILE * i, pos.y + TILE * j, TILE, TILE, RAYWHITE, LIGHTGRAY);
 }
 
