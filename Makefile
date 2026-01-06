@@ -9,8 +9,8 @@ c: raycaster
 run: raycaster
 	./raycaster
 
-raycaster: main.c map.c player.c
-	gcc main.c map.c player.c -o raycaster $(CFLAGS)
+raycaster: main.c map.c player.c raycaster.c
+	gcc main.c map.c player.c raycaster.c -o raycaster $(CFLAGS)
 
 clean:
 	rm raycaster
