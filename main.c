@@ -43,7 +43,7 @@ int main () {
             MovePlayerLeft(&p, v / 2, dt, N, map_2d, TILE, pos_map);
 
         BeginDrawing();
-            ClearBackground((Color){0, 102, 204, 255});
+            ClearBackground((Color){0, 167, 223, 255});
             DrawRectangle(0, WY / 2, WX, WY / 2, DARKGREEN);
             Raycast(p, N, map_2d, pos_map, TILE, WX, WY);
             DrawMap(pos_map, TILE, N, map_2d);
