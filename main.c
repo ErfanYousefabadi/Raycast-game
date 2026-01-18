@@ -5,50 +5,82 @@
 #include "player.h"
 #include "raycaster.h"
 
+typedef enum {
+    PLAY_MODE,  // 3D First-person view
+    EDIT_MODE   // 2D TOP-down map view
+} GameState;
+
 int main () {
     
     const int WX = 1280, WY = 720;
     InitWindow(WX, WY, "2D MAP");
-    const int TILE = 15, N = 15;
-    Vector2 pos_map = {WX - TILE * N - 20, 20};
+    const int N = 15;
+    const int TILE_PLAY = 15;
+    const int TILE_EDIT = 25;
+    Vector2 pos_map_play = {WX - TILE_PLAY * N - 20, 20};
+    Vector2 pos_map_edit = {(WX - TILE_EDIT * N) / 2, (WY - TILE_EDIT * N) / 2};
     SetTargetFPS(60);
     
     int map_2d[N][N];
     Player p;
     const float v = 50;
-    p.pos.x = (N / 2.) * TILE + pos_map.x;
-    p.pos.y = (N / 2.) * TILE + pos_map.y;
+    p.pos.x = (N / 2.) * TILE_PLAY + pos_map_play.x;
+    p.pos.y = (N / 2.) * TILE_PLAY + pos_map_play.y;
     p.dir.x = 1, p.dir.y = 0;
     p.plane.x = 0, p.plane.y = 0.66;
     InitMap(N, map_2d);
+    GameState GState = PLAY_MODE;
     while (!WindowShouldClose()) {
-        // update map
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) 
-            UpdateMap(N, TILE, pos_map, GetMousePosition(), p.pos, map_2d);
+        
+        // change GameState?
+        if (IsKeyPressed(KEY_M)) {
+            if (GState == PLAY_MODE)
+                GState = EDIT_MODE;
+            else GState = PLAY_MODE;
+        }
+
         float dt = GetFrameTime();
+    
+        if (GState == PLAY_MODE) {
+            // update player
+            if (IsKeyDown(KEY_LEFT))
+                RotatePlayer(&p, -dt * PI / 2);
+            if (IsKeyDown(KEY_RIGHT))
+                RotatePlayer(&p, dt * PI / 2);
 
-        // update player
-        if (IsKeyDown(KEY_LEFT))
-            RotatePlayer(&p, -dt * PI / 2);
-        if (IsKeyDown(KEY_RIGHT))
-            RotatePlayer(&p, dt * PI / 2);
+            if (IsKeyDown(KEY_W))
+                MovePlayerForward(&p, v, dt, N, map_2d, TILE_PLAY, pos_map_play);
+            if (IsKeyDown(KEY_S)) 
+                MovePlayerBackward(&p, v / 2, dt, N, map_2d, TILE_PLAY, pos_map_play);
+            if (IsKeyDown(KEY_D))
+                MovePlayerRight(&p, v / 2, dt, N, map_2d, TILE_PLAY, pos_map_play);
+            if (IsKeyDown(KEY_A))
+                MovePlayerLeft(&p, v / 2, dt, N, map_2d, TILE_PLAY, pos_map_play);
 
-        if (IsKeyDown(KEY_W))
-            MovePlayerForward(&p, v, dt, N, map_2d, TILE, pos_map);
-        if (IsKeyDown(KEY_S)) 
-            MovePlayerBackward(&p, v / 2, dt, N, map_2d, TILE, pos_map);
-        if (IsKeyDown(KEY_D))
-            MovePlayerRight(&p, v / 2, dt, N, map_2d, TILE, pos_map);
-        if (IsKeyDown(KEY_A))
-            MovePlayerLeft(&p, v / 2, dt, N, map_2d, TILE, pos_map);
-
-        BeginDrawing();
-            ClearBackground((Color){0, 167, 223, 255});
-            DrawRectangle(0, WY / 2, WX, WY / 2, DARKGREEN);
-            Raycast(p, N, map_2d, pos_map, TILE, WX, WY);
-            DrawMap(pos_map, TILE, N, map_2d);
-            ShowPlayer(p);
-        EndDrawing();
+            BeginDrawing();
+                ClearBackground((Color){0, 167, 223, 255});
+                DrawRectangle(0, WY / 2, WX, WY / 2, DARKGREEN);
+                Raycast(p, N, map_2d, pos_map_play, TILE_PLAY, WX, WY);
+                DrawMap(pos_map_play, TILE_PLAY, N, map_2d);
+                ShowPlayer(p);
+            EndDrawing();
+        }
+        else if (GState == EDIT_MODE) {
+            // update player position from map_play to map_edit
+            Player p2 = p;
+            p2.pos.x -= pos_map_play.x, p2.pos.y -= pos_map_play.y;
+            p2.pos.x /= TILE_PLAY, p2.pos.y /= TILE_PLAY;
+            p2.pos.x *= TILE_EDIT, p2.pos.y *= TILE_EDIT;
+            p2.pos.x += pos_map_edit.x, p2.pos.y += pos_map_edit.y;
+            // update map
+            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) 
+                UpdateMap(N, TILE_EDIT, pos_map_edit, GetMousePosition(), p2.pos, map_2d);
+            BeginDrawing();
+                ClearBackground(GRAY);
+                DrawMap(pos_map_edit, TILE_EDIT, N, map_2d);
+                ShowPlayer(p2);
+            EndDrawing();
+        }
     }
     CloseWindow();
     return 0;
