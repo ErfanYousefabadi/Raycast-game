@@ -3,9 +3,9 @@
 void DDA (int x_pixel, Vector2 pos, Vector2 ray, const int N, int map[N][N], Vector2 map_pos, const int TILE, const int WY) {
     pos.x -= map_pos.x, pos.y -= map_pos.y;
     pos.x /= TILE, pos.y /= TILE;
-    double deltaDistX = (!ray.x) ? 1e30 : fabs(1 / ray.x);
-    double deltaDistY = (!ray.y) ? 1e30 : fabs(1 / ray.y);
-    float sideDistX, sideDistY;
+    double deltaDistX = (!ray.x) ? 1e30 : fabs((double)1 / ray.x);
+    double deltaDistY = (!ray.y) ? 1e30 : fabs((double)1 / ray.y);
+    double sideDistX, sideDistY;
     int stepX, stepY;
     if (ray.x < 0) {
         stepX = -1;
@@ -40,10 +40,10 @@ void DDA (int x_pixel, Vector2 pos, Vector2 ray, const int N, int map[N][N], Vec
         hit = map[(int)pos.x][(int)pos.y] == 1;
     }
 
-    float dis = sideDistX - deltaDistX;
+    double dis = sideDistX - deltaDistX;
     if (side) dis = sideDistY - deltaDistY;
     int h = WY / dis;
-    Color color = GRAY;
+    Color color = {100, 100, 100, 255};
     if (side == 1) color = DARKGRAY;
     DrawRectangle(x_pixel, (WY - h) / 2, 1, h, color);
 }

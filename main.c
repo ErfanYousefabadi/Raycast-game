@@ -16,11 +16,10 @@ int main () {
     InitWindow(WX, WY, "2D MAP");
     const int N = 15;
     const int TILE_PLAY = 15;
-    const int TILE_EDIT = 25;
+    const int TILE_EDIT = 35;
     Vector2 pos_map_play = {WX - TILE_PLAY * N - 20, 20};
     Vector2 pos_map_edit = {(WX - TILE_EDIT * N) / 2, (WY - TILE_EDIT * N) / 2};
     SetTargetFPS(60);
-    
     int map_2d[N][N];
     Player p;
     const float v = 50;
@@ -35,19 +34,19 @@ int main () {
         // change GameState?
         if (IsKeyPressed(KEY_M)) {
             if (GState == PLAY_MODE)
-                GState = EDIT_MODE;
+            GState = EDIT_MODE;
             else GState = PLAY_MODE;
         }
-
+        
         float dt = GetFrameTime();
-    
+        
         if (GState == PLAY_MODE) {
             // update player
             if (IsKeyDown(KEY_LEFT))
-                RotatePlayer(&p, -dt * PI / 2);
+                RotatePlayer(&p, -dt * PI / 3 * 2);
             if (IsKeyDown(KEY_RIGHT))
-                RotatePlayer(&p, dt * PI / 2);
-
+                RotatePlayer(&p, dt * PI / 3 * 2);
+            
             if (IsKeyDown(KEY_W))
                 MovePlayerForward(&p, v, dt, N, map_2d, TILE_PLAY, pos_map_play);
             if (IsKeyDown(KEY_S)) 
@@ -56,13 +55,15 @@ int main () {
                 MovePlayerRight(&p, v / 2, dt, N, map_2d, TILE_PLAY, pos_map_play);
             if (IsKeyDown(KEY_A))
                 MovePlayerLeft(&p, v / 2, dt, N, map_2d, TILE_PLAY, pos_map_play);
-
+            
             BeginDrawing();
                 ClearBackground((Color){0, 167, 223, 255});
                 DrawRectangle(0, WY / 2, WX, WY / 2, DARKGREEN);
                 Raycast(p, N, map_2d, pos_map_play, TILE_PLAY, WX, WY);
-                DrawMap(pos_map_play, TILE_PLAY, N, map_2d);
+                DrawMapPlay(pos_map_play, TILE_PLAY, N, map_2d);
                 ShowPlayer(p);
+                DrawFPS(WX - 100, WY / 2);
+                DrawText("Play Mode - Press M For map\n", 20, 20, 20, BLACK);
             EndDrawing();
         }
         else if (GState == EDIT_MODE) {
@@ -73,12 +74,15 @@ int main () {
             p2.pos.x *= TILE_EDIT, p2.pos.y *= TILE_EDIT;
             p2.pos.x += pos_map_edit.x, p2.pos.y += pos_map_edit.y;
             // update map
-            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) 
-                UpdateMap(N, TILE_EDIT, pos_map_edit, GetMousePosition(), p2.pos, map_2d);
+            if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) 
+                UpdateMapAdd(N, TILE_EDIT, pos_map_edit, GetMousePosition(), p2.pos, map_2d);
+            if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) 
+                UpdateMapRemove(N, TILE_EDIT, pos_map_edit, GetMousePosition(), p2.pos, map_2d);
             BeginDrawing();
                 ClearBackground(GRAY);
-                DrawMap(pos_map_edit, TILE_EDIT, N, map_2d);
+                DrawMapEdit(pos_map_edit, TILE_EDIT, N, map_2d);
                 ShowPlayer(p2);
+                DrawText("Edit Mode - Press M To Play\n", 20, 20, 20, BLACK);
             EndDrawing();
         }
     }
