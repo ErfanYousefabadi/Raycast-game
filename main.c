@@ -50,11 +50,11 @@ int main () {
             if (IsKeyDown(KEY_W))
                 MovePlayerForward(&p, v, dt, N, map_2d, TILE_PLAY, pos_map_play);
             if (IsKeyDown(KEY_S)) 
-                MovePlayerBackward(&p, v / 2, dt, N, map_2d, TILE_PLAY, pos_map_play);
+                MovePlayerBackward(&p, v, dt, N, map_2d, TILE_PLAY, pos_map_play);
             if (IsKeyDown(KEY_D))
-                MovePlayerRight(&p, v / 2, dt, N, map_2d, TILE_PLAY, pos_map_play);
+                MovePlayerRight(&p, v, dt, N, map_2d, TILE_PLAY, pos_map_play);
             if (IsKeyDown(KEY_A))
-                MovePlayerLeft(&p, v / 2, dt, N, map_2d, TILE_PLAY, pos_map_play);
+                MovePlayerLeft(&p, v, dt, N, map_2d, TILE_PLAY, pos_map_play);
             
             BeginDrawing();
                 ClearBackground((Color){0, 167, 223, 255});
@@ -67,7 +67,7 @@ int main () {
             EndDrawing();
         }
         else if (GState == EDIT_MODE) {
-            // update player position from map_play to map_edit
+            // get player position from map_play to map_edit
             Player p2 = p;
             p2.pos.x -= pos_map_play.x, p2.pos.y -= pos_map_play.y;
             p2.pos.x /= TILE_PLAY, p2.pos.y /= TILE_PLAY;
