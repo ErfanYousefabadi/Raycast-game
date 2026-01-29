@@ -8,6 +8,13 @@
 #include <math.h>
 #endif
 
+void InitPlayer (Player *p, const int N, const int TILE, Vector2 pos_map) {
+    (*p).pos.x = (N / 2.) * TILE + pos_map.x;
+    (*p).pos.y = (N / 2.) * TILE + pos_map.y;
+    (*p).dir.x = 0, (*p).dir.y = -1;
+    (*p).plane.x = 0.66, (*p).plane.y = 0;
+}
+
 void ShowPlayer (Player p) {
     DrawCircle(p.pos.x, p.pos.y, 5, RED);
     DrawLine(p.pos.x, p.pos.y, p.pos.x + p.dir.x * 15, p.pos.y + p.dir.y * 15, RED);

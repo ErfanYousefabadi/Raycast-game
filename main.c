@@ -22,23 +22,28 @@ int main () {
     Vector2 pos_map_edit = {(WX - TILE_EDIT * N) / 2, (WY - TILE_EDIT * N) / 2};
     SetTargetFPS(60);
     int world_map[N][N];
-    Player p;
+    const char map_file[] = "map.txt";
+    const char player_file[] = "player.txt";
+    
     const float v = 30;
-    p.pos.x = (N / 2.) * TILE_PLAY + pos_map_play.x;
-    p.pos.y = (N / 2.) * TILE_PLAY + pos_map_play.y;
-    p.dir.x = 0, p.dir.y = -1;
-    p.plane.x = 0.66, p.plane.y = 0;
+    Player p;
     {
-        FILE *F = fopen("persistence.txt", "r");
+        FILE *F = fopen(map_file, "r");
         if (!F) {
             InitMap(N, world_map);
-        }
-        else {
+        } else {
             fclose(F);
-            load_map(N, world_map);
+            LoadMap(N, world_map, map_file);
         }
+        F = fopen(player_file, "r");
+        if (!F) {
+            InitPlayer(&p, N, TILE_PLAY, pos_map_play);
+        } else {
+            fclose(F);
+            LoadPlayer(&p, player_file);
+        }
+        SaveBackup(N, world_map, p, map_file, player_file);
     }
-    // InitMap(N, world_map);
     GameState GState = PLAY_MODE;
     while (!WindowShouldClose()) {
         
@@ -48,8 +53,12 @@ int main () {
             GState = EDIT_MODE;
             else GState = PLAY_MODE;
         }
-        
+        // save or load backup
         float dt = GetFrameTime();
+        if (IsKeyPressed(KEY_F5)) // save
+            SaveBackup(N, world_map, p, map_file, player_file);
+        else if (IsKeyPressed(KEY_F9)) // load
+            LoadBackup(N, world_map, &p, map_file, player_file);
         
         if (GState == PLAY_MODE) {
             // update player
@@ -74,7 +83,7 @@ int main () {
                 DrawMapPlay(pos_map_play, TILE_PLAY, N, world_map);
                 ShowPlayer(p);
                 DrawFPS(WX - 100, WY / 2);
-                DrawText("Play Mode - Press M For map\n", 20, 20, 20, BLACK);
+                DrawText("Play Mode  |  M: Map  |  F5: Save  |  F9: Load\n", 20, 20, 20, BLACK);
             EndDrawing();
         }
         else if (GState == EDIT_MODE) {
@@ -90,16 +99,11 @@ int main () {
             if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) 
                 UpdateMapRemove(N, TILE_EDIT, pos_map_edit, GetMousePosition(), p2.pos, world_map);
             
-            // save or load
-            if (IsKeyPressed(KEY_F5)) // save
-                save_map(N, world_map);
-            else if (IsKeyPressed(KEY_F9)) // load
-                load_map(N, world_map);
             BeginDrawing();
                 ClearBackground(GRAY);
                 DrawMapEdit(pos_map_edit, TILE_EDIT, N, world_map);
                 ShowPlayer(p2);
-                DrawText("Edit Mode - Press M To Play\n", 20, 20, 20, BLACK);
+                DrawText("Edit Mode  |  M: Play  |  F5: Save  |  F9: Load\n", 20, 20, 20, BLACK);
             EndDrawing();
         }
     }

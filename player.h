@@ -11,6 +11,7 @@ typedef struct {
 
 void ShowPlayer (Player p);
 void RotatePlayer (Player *p, float alpha);
+void InitPlayer (Player *p, const int N, const int TILE, Vector2 pos_map);
 void MovePlayerForward (Player *p, float v, float dt, int N, int map[N][N], int TILE, Vector2 mpos);
 void MovePlayerBackward (Player *p, float v, float dt, int N, int map[N][N], int TILE, Vector2 mpos);
 void MovePlayerRight (Player *p, float v, float dt, int N, int map[N][N], int TILE, Vector2 mpos);
