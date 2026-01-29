@@ -22,11 +22,11 @@ int main () {
     SetTargetFPS(60);
     int map_2d[N][N];
     Player p;
-    const float v = 50;
+    const float v = 30;
     p.pos.x = (N / 2.) * TILE_PLAY + pos_map_play.x;
     p.pos.y = (N / 2.) * TILE_PLAY + pos_map_play.y;
-    p.dir.x = 1, p.dir.y = 0;
-    p.plane.x = 0, p.plane.y = 0.66;
+    p.dir.x = 0, p.dir.y = -1;
+    p.plane.x = 0.66, p.plane.y = 0;
     InitMap(N, map_2d);
     GameState GState = PLAY_MODE;
     while (!WindowShouldClose()) {
